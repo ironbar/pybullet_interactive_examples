@@ -4,14 +4,10 @@ import pybullet_data
 pybullet.connect(pybullet.GUI)
 pybullet.setAdditionalSearchPath(pybullet_data.getDataPath())
 plane = pybullet.loadURDF("plane.urdf")
-robot = pybullet.loadURDF("../../kuka_experimental/kuka_kr210_support/urdf/kr210l150.urdf",
+robot = pybullet.loadURDF("../kuka_experimental/kuka_kr210_support/urdf/kr210l150.urdf",
                           [0, 0, 0], useFixedBase=1)  # use a fixed base!
 pybullet.setGravity(0, 0, -9.81)
-# pybullet.setTimeStep(0.0001)
-# pybullet.setRealTimeSimulation(0)
 pybullet.setRealTimeSimulation(1) #this makes the simulation real time
-# pybullet.setJointMotorControlArray(robot, range(6), pybullet.POSITION_CONTROL,
-#                                    targetPositions=[0]*6)
 
 param_idx = []
 for idx in range(6):
