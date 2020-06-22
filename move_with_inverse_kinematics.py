@@ -8,7 +8,8 @@ def main():
     pybullet.connect(pybullet.GUI)
     pybullet.setAdditionalSearchPath(pybullet_data.getDataPath())
     plane = pybullet.loadURDF("plane.urdf")
-    robot = pybullet.loadURDF(args.robot_path, [0, 0, 0], useFixedBase=1)  # use a fixed base!
+    flags = pybullet.URDF_USE_SELF_COLLISION | pybullet.URDF_USE_SELF_COLLISION_EXCLUDE_ALL_PARENTS
+    robot = pybullet.loadURDF(args.robot_path, [0, 0, 0], useFixedBase=1, flags=flags)  # use a fixed base!
     pybullet.setGravity(0, 0, -9.81)
     pybullet.setRealTimeSimulation(1) #this makes the simulation real time
 
