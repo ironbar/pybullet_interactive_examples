@@ -70,6 +70,10 @@ class BlueRobot():
             **self.kinematics_kwargs)
         return target_positions
 
+    def debug_arm_idx(self):
+        pybullet.setDebugObjectColor(self.id, self.RIGHT_ARM_LINK_IDX, [1, 0, 0])
+        pybullet.setDebugObjectColor(self.id, self.LEFT_ARM_LINK_IDX, [1, 0, 0])
+
 
 def getJointRanges(bodyId, includeFixed=False):
     """

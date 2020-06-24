@@ -25,9 +25,16 @@ def main():
     for idx in range(pybullet.getNumJoints(robot.id)):
         print(idx, [round(x, 2) for x in robot._get_link_state(idx)[0]])
 
+    robot.debug_arm_idx()
+
     while 1:
-        robot.move_right_arm(*right_control.get_position())
-        robot.move_left_arm(*left_control.get_position())
+        position, orientation = right_control.get_position()
+        robot.move_right_arm(position, orientation)
+        debug_position(position, robot.get_right_arm_position()[0])
+
+        position, orientation = left_control.get_position()
+        robot.move_left_arm(position, orientation)
+        debug_position(position, robot.get_left_arm_position()[0])
 
         if rigth_clamp_control.close_clamp():
             robot.close_right_clamp()
@@ -52,6 +59,10 @@ def debug_motors(robot, target_positions, joint_idx):
     upper_limits = [robot.upper_limits[idx] for idx in joint_idx]
     print('upper_limits      ', sep.join([str(round(x, 2)) for x in upper_limits]))
     print()
+
+def debug_position(goal, source):
+    pybullet.addUserDebugLine(
+        goal, source, lineColorRGB=[1, 0, 0], lifeTime=1, lineWidth=2)
 
 class PositionControl():
 
