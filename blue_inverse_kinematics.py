@@ -17,7 +17,10 @@ def main():
     robot = BlueRobot(args.robot_path)
 
     right_control = PositionControl(*robot.get_right_arm_position(), prefix='right')
+    rigth_clamp_control = ClampControl(prefix='right')
+
     left_control = PositionControl(*robot.get_left_arm_position(), prefix='left')
+    left_clamp_control = ClampControl(prefix='left')
 
     for idx in range(pybullet.getNumJoints(robot.id)):
         print(idx, [round(x, 2) for x in robot._get_link_state(idx)[0]])
@@ -25,6 +28,15 @@ def main():
     while 1:
         robot.move_right_arm(*right_control.get_position())
         robot.move_left_arm(*left_control.get_position())
+
+        if rigth_clamp_control.close_clamp():
+            robot.close_right_clamp()
+        else:
+            robot.open_right_clamp()
+        if left_clamp_control.close_clamp():
+            robot.close_left_clamp()
+        else:
+            robot.open_left_clamp()
 
         # debug_motors(robot, target_positions, range(7))
 
@@ -64,6 +76,15 @@ class PositionControl():
         position = [pybullet.readUserDebugParameter(idx) for idx in self.position_idx]
         return position, orientation
 
+
+class ClampControl():
+
+    def __init__(self, prefix):
+        self.id = pybullet.addUserDebugParameter('%s clamp' % prefix, 0, -1, 0)
+        self.value = 0
+
+    def close_clamp(self):
+        return pybullet.readUserDebugParameter(self.id) % 2
 
 def parse_args():
     parser = argparse.ArgumentParser(

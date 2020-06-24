@@ -39,6 +39,26 @@ class BlueRobot():
             self.id, self.moving_joints_idx[12:19], pybullet.POSITION_CONTROL,
             targetPositions=target_positions[12:19])
 
+    def close_right_clamp(self):
+        pybullet.setJointMotorControlArray(
+            self.id, self.moving_joints_idx[8:12], pybullet.POSITION_CONTROL,
+            targetPositions=[1, 0, 1, 0])
+
+    def open_right_clamp(self):
+        pybullet.setJointMotorControlArray(
+            self.id, self.moving_joints_idx[8:12], pybullet.POSITION_CONTROL,
+            targetPositions=[0]*4)
+
+    def close_left_clamp(self):
+        pybullet.setJointMotorControlArray(
+            self.id, self.moving_joints_idx[20:24], pybullet.POSITION_CONTROL,
+            targetPositions=[1, 0, 1, 0])
+
+    def open_left_clamp(self):
+        pybullet.setJointMotorControlArray(
+            self.id, self.moving_joints_idx[20:24], pybullet.POSITION_CONTROL,
+            targetPositions=[0]*4)
+
     def _inverse_kinematics(self, link_idx, position, orientation):
         if len(orientation) == 3:
             orientation = pybullet.getQuaternionFromEuler(orientation)
