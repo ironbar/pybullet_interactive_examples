@@ -1,6 +1,7 @@
 import sys
 import time
 import argparse
+from tqdm import tqdm
 import pybullet
 import pybullet_data
 
@@ -16,6 +17,10 @@ def main():
 
     robot = BlueRobot(args.robot_path)
 
+    robot.go_to_rest_pose()
+    for _ in tqdm(range(10), desc='startup'):
+        time.sleep(0.01)
+
     right_control = PositionControl(*robot.get_right_arm_position(), prefix='right')
     rigth_clamp_control = ClampControl(prefix='right')
 
@@ -25,7 +30,10 @@ def main():
     for idx in range(pybullet.getNumJoints(robot.id)):
         print(idx, [round(x, 2) for x in robot._get_link_state(idx)[0]])
 
-    robot.debug_arm_idx()
+    # robot.debug_arm_idx()
+    # color_idx = pybullet.addUserDebugParameter('color idx', 0, len(robot.moving_joints_idx), 0)
+
+    
 
     while 1:
         position, orientation = right_control.get_position()
@@ -46,6 +54,10 @@ def main():
             robot.open_left_clamp()
 
         # debug_motors(robot, target_positions, range(7))
+
+        # for idx in robot.moving_joints_idx:
+        #     pybullet.setDebugObjectColor(robot.id, idx, [0, 0, 0])
+        # pybullet.setDebugObjectColor(robot.id, robot.moving_joints_idx[int(pybullet.readUserDebugParameter(color_idx))], [0, 1, 0])
 
 def debug_motors(robot, target_positions, joint_idx):
     sep = '  \t'

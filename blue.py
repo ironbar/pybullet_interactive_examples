@@ -32,6 +32,16 @@ class BlueRobot():
             self.id, self.moving_joints_idx[:7], pybullet.POSITION_CONTROL,
             targetPositions=target_positions[:7])
 
+        # sep = '  \t'
+        # print('idx               ', sep.join([str(x) for x, _ in enumerate(target_positions)]))
+        # print('target_positions  ', sep.join([str(round(x, 2)) for x in target_positions]))
+        # current_positions = self.get_motor_positions()
+        # print('current_positions ', sep.join([str(round(x, 2)) for x in current_positions]))
+        # print('diff              ', sep.join([str(round(x-y, 2)) for x, y in zip(current_positions, target_positions)]))
+        # print('lower_limit       ', sep.join([str(round(x, 2)) for x in self.lower_limits]))
+        # print('upper_limit       ', sep.join([str(round(x, 2)) for x in self.upper_limits]))
+        # print()
+
     def move_left_arm(self, position, orientation):
         target_positions = self._inverse_kinematics(
             self.LEFT_ARM_LINK_IDX, position, orientation)
@@ -75,6 +85,14 @@ class BlueRobot():
         pybullet.setDebugObjectColor(self.id, self.RIGHT_ARM_LINK_IDX, [1, 0, 0])
         pybullet.setDebugObjectColor(self.id, self.LEFT_ARM_LINK_IDX, [1, 0, 0])
 
+    def get_motor_positions(self):
+        return [pybullet.getJointState(self.id, idx)[0] for idx in self.moving_joints_idx]
+
+    def go_to_rest_pose(self):
+        pybullet.setJointMotorControlArray(
+            self.id, self.moving_joints_idx, pybullet.POSITION_CONTROL,
+            targetPositions=self.rest_poses)
+
 
 def getJointRanges(bodyId, includeFixed=False):
     """
@@ -107,8 +125,13 @@ def getJointRanges(bodyId, includeFixed=False):
 
             # For simplicity, assume resting state == initial state
             rp = pybullet.getJointState(bodyId, i)[0]
-            # Instead of that I will use the rest state as the middle point for each motor
-            # rp = ll + jr/4
+            # Instead of that I will define a better rest position
+            if ul == 0:
+                rp = ul - jr/4
+            elif ul == -1:
+                rp = 0
+            else:
+                rp = ll + jr/2
 
             # lowerLimits.append(-2)
             # upperLimits.append(2)

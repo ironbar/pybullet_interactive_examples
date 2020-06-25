@@ -6,3 +6,5 @@ It uses robots from https://github.com/ros-industrial/kuka_experimental.git, so 
 download that repo to be able to run the scripts.
 
 ![](sample.gif)
+
+![](blue.gif)
