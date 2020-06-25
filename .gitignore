@@ -1,2 +1,4 @@
 .vscode/.ropeproject/config.py
 __pycache__/blue.cpython-37.pyc
+.vscode/.ropeproject/objectdb
+__pycache__/blue_inverse_kinematics.cpython-37.pyc

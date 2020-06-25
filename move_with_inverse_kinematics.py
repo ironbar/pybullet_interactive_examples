@@ -3,6 +3,9 @@ import argparse
 import pybullet
 import pybullet_data
 
+from blue import get_link_state
+from blue_inverse_kinematics import PositionControl, debug_position
+
 def main():
     args = parse_args()
     pybullet.connect(pybullet.GUI)
@@ -13,25 +16,21 @@ def main():
     pybullet.setGravity(0, 0, -9.81)
     pybullet.setRealTimeSimulation(1) #this makes the simulation real time
 
-    position_idx = []
-    position_idx.append(pybullet.addUserDebugParameter('x', -2, 2, 0.1))
-    position_idx.append(pybullet.addUserDebugParameter('y', -2, 2, 0.1))
-    position_idx.append(pybullet.addUserDebugParameter('z', 0.2, 2, 1))
-
-    orientation_idx = []
-    orientation_idx.append(pybullet.addUserDebugParameter('euler 1', -3.14, 3.14, 0))
-    orientation_idx.append(pybullet.addUserDebugParameter('euler 2', -3.14, 3.14, 0))
-    orientation_idx.append(pybullet.addUserDebugParameter('euler 2', -3.14, 3.14, 0))
-
     n_joints = pybullet.getNumJoints(robot)
+    reference_link = n_joints-2
+    position, orientation = get_link_state(robot, reference_link)
+    position_control = PositionControl(position, orientation, prefix='')
+    pybullet.setDebugObjectColor(robot, reference_link, [1, 0, 0]) # press 'w' to see this link highlighted
+
     print('The number of joints in the robot is: %i' % n_joints)
     while 1:
-        euler = [pybullet.readUserDebugParameter(idx) for idx in orientation_idx]
-        orientation = pybullet.getQuaternionFromEuler(euler)
-        position = [pybullet.readUserDebugParameter(idx) for idx in position_idx]
-        target_positions = pybullet.calculateInverseKinematics(robot, n_joints-2, position, orientation)
+        position, orientation = position_control.get_position()
+        orientation = pybullet.getQuaternionFromEuler(orientation)
+        target_positions = pybullet.calculateInverseKinematics(robot, reference_link, position, orientation)
         pybullet.setJointMotorControlArray(robot, range(len(target_positions)), pybullet.POSITION_CONTROL,
                                            targetPositions=target_positions)
+        current_position, _ = get_link_state(robot, reference_link)
+        debug_position(position, current_position)
 
 def parse_args():
     parser = argparse.ArgumentParser(

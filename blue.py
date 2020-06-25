@@ -71,6 +71,7 @@ class BlueRobot():
         return target_positions
 
     def debug_arm_idx(self):
+        # press 'w' to see this links highlighted
         pybullet.setDebugObjectColor(self.id, self.RIGHT_ARM_LINK_IDX, [1, 0, 0])
         pybullet.setDebugObjectColor(self.id, self.LEFT_ARM_LINK_IDX, [1, 0, 0])
 
