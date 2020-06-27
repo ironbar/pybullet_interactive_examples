@@ -30,10 +30,7 @@ def main():
     for idx in range(pybullet.getNumJoints(robot.id)):
         print(idx, [round(x, 2) for x in robot._get_link_state(idx)[0]])
 
-    # robot.debug_arm_idx()
-    # color_idx = pybullet.addUserDebugParameter('color idx', 0, len(robot.moving_joints_idx), 0)
-
-    
+    robot.debug_arm_idx()
 
     while 1:
         position, orientation = right_control.get_position()
@@ -53,25 +50,6 @@ def main():
         else:
             robot.open_left_clamp()
 
-        # debug_motors(robot, target_positions, range(7))
-
-        # for idx in robot.moving_joints_idx:
-        #     pybullet.setDebugObjectColor(robot.id, idx, [0, 0, 0])
-        # pybullet.setDebugObjectColor(robot.id, robot.moving_joints_idx[int(pybullet.readUserDebugParameter(color_idx))], [0, 1, 0])
-
-def debug_motors(robot, target_positions, joint_idx):
-    sep = '  \t'
-    target_positions = [target_positions[idx] for idx in joint_idx]
-    print('target_positions  ', sep.join([str(round(x, 2)) for x in target_positions]))
-    current_positions = [pybullet.getJointState(robot.id, robot.moving_joints_idx[idx])[0] for idx in joint_idx]
-    print('current_positions ', sep.join([str(round(x, 2)) for x in current_positions]))
-    print('diff              ', sep.join([str(round(x-y, 2)) for x, y in zip(current_positions, target_positions)]))
-    lower_limits = [robot.lower_limits[idx] for idx in joint_idx]
-    print('lower_limits      ', sep.join([str(round(x, 2)) for x in lower_limits]))
-    upper_limits = [robot.upper_limits[idx] for idx in joint_idx]
-    print('upper_limits      ', sep.join([str(round(x, 2)) for x in upper_limits]))
-    print()
-
 def debug_position(goal, source):
     pybullet.addUserDebugLine(
         goal, source, lineColorRGB=[1, 0, 0], lifeTime=1, lineWidth=2)
@@ -87,9 +65,12 @@ class PositionControl():
         position_idx.append(pybullet.addUserDebugParameter('%s z' % prefix, 0.2, 2, z))
 
         orientation_idx = []
-        orientation_idx.append(pybullet.addUserDebugParameter('%s euler 1' % prefix, -3.14, 3.14, initial_orientation[0]))
-        orientation_idx.append(pybullet.addUserDebugParameter('%s euler 2' % prefix, -3.14, 3.14, initial_orientation[1]))
-        orientation_idx.append(pybullet.addUserDebugParameter('%s euler 3' % prefix, -3.14, 3.14, initial_orientation[2]))
+        orientation_idx.append(pybullet.addUserDebugParameter('%s euler 1' % prefix, -3.14, 3.14,
+                                                              initial_orientation[0]))
+        orientation_idx.append(pybullet.addUserDebugParameter('%s euler 2' % prefix, -3.14, 3.14,
+                                                              initial_orientation[1]))
+        orientation_idx.append(pybullet.addUserDebugParameter('%s euler 3' % prefix, -3.14, 3.14,
+                                                              initial_orientation[2]))
 
         self.position_idx = position_idx
         self.orientation_idx = orientation_idx
