@@ -50,9 +50,9 @@ def main():
         else:
             robot.open_left_clamp()
 
-def debug_position(goal, source):
+def debug_position(goal, source, lifetime=0.5):
     pybullet.addUserDebugLine(
-        goal, source, lineColorRGB=[1, 0, 0], lifeTime=1, lineWidth=2)
+        goal, source, lineColorRGB=[1, 0, 0], lifeTime=lifetime, lineWidth=2)
 
 class PositionControl():
 
